@@ -1,7 +1,7 @@
+use iced::mouse;
 use iced::widget::canvas::{Stroke, Style, stroke};
 use iced::widget::{canvas, column, container, row, scrollable};
-use iced::{Color, Element, Length, Point, Rectangle, Renderer, Theme};
-use iced::{mouse, theme};
+use iced::{Element, Length, Point, Renderer};
 use iced_aw::NumberInput;
 
 #[derive(Debug, Clone)]
@@ -195,11 +195,11 @@ impl<Message> iced::widget::canvas::Program<Message> for Curve {
 
     fn draw(
         &self,
-        state: &Self::State,
+        _state: &Self::State,
         renderer: &Renderer,
         theme: &iced_renderer::core::Theme,
         bounds: iced::Rectangle,
-        cursor: mouse::Cursor,
+        _cursor: mouse::Cursor,
     ) -> Vec<iced::widget::canvas::Geometry<Renderer>> {
         let palette = theme.palette();
         let mut frame = canvas::Frame::new(renderer, bounds.size());
@@ -209,10 +209,20 @@ impl<Message> iced::widget::canvas::Program<Message> for Curve {
         let control_one = canvas::Path::circle(self.control_one, 4.0);
         let control_two = canvas::Path::circle(self.control_two, 4.0);
 
-        frame.fill(&start, palette.primary);
-        frame.fill(&end, palette.primary);
-        frame.fill(&control_one, palette.success);
-        frame.fill(&control_two, palette.success);
+        let control_stroke = Stroke {
+            style: Style::Solid(palette.success),
+            width: 2.0,
+            line_cap: stroke::LineCap::Round,
+            ..Stroke::default()
+        };
+
+        let start_to_control = canvas::Path::line(self.start, self.control_one);
+        let control_to_control = canvas::Path::line(self.control_one, self.control_two);
+        let control_to_end = canvas::Path::line(self.control_two, self.end);
+
+        frame.stroke(&start_to_control, control_stroke);
+        frame.stroke(&control_to_control, control_stroke);
+        frame.stroke(&control_to_end, control_stroke);
 
         for segment in 0..self.detail {
             let start = self.get_location(segment as f32 / self.detail as f32);
@@ -226,6 +236,11 @@ impl<Message> iced::widget::canvas::Program<Message> for Curve {
             };
             frame.stroke(&line, stroke);
         }
+
+        frame.fill(&start, palette.primary);
+        frame.fill(&end, palette.primary);
+        frame.fill(&control_one, palette.success);
+        frame.fill(&control_two, palette.success);
 
         vec![frame.into_geometry()]
     }
