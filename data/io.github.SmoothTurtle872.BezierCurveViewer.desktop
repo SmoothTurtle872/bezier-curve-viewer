@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Bezier Curve Viewer
+Exec=bezier-curve-viewer
+Icon=io.github.SmoothTurtle872.BezierCurveViewer
+Terminal=false

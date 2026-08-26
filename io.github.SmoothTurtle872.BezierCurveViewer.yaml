@@ -1,0 +1,34 @@
+id: io.github.SmoothTurtle872.BezierCurveViewer
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: bezier-curve-viewer
+finish-args:
+  - --socket=wayland
+  - --socket=x11
+  - --device=dri
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin
+  env:
+    CARGO_HOME: /run/build/bezier-curve-viewer/cargo
+modules:
+  - name: bezier-curve-viewer
+    buildsystem: simple
+    build-commands:
+      # Run cargo in offline mode leveraging the pre-fetched sources
+      - cargo --offline build --release --verbose
+      - install -Dm755 target/release/bezier-curve-viewer /app/bin/bezier-curve-viewer
+    sources:
+      - type: dir
+        path: .
+      - cargo-sources.yaml
+    post-install:
+      - install -Dm644 data/io.github.SmoothTurtle872.BezierCurveViewer.desktop /app/share/applications/io.github.SmoothTurtle872.BezierCurveViewer.desktop
+      - install -Dm644 data/icons/16x16.png /app/share/icons/hicolor/16x16/apps/io.github.SmoothTurtle872.BezierCurveViewer.png
+      - install -Dm644 data/icons/32x32.png /app/share/icons/hicolor/32x32/apps/io.github.SmoothTurtle872.BezierCurveViewer.png
+      - install -Dm644 data/icons/64x64.png /app/share/icons/hicolor/64x64/apps/io.github.SmoothTurtle872.BezierCurveViewer.png
+      - install -Dm644 data/icons/128x128.png /app/share/icons/hicolor/128x128/apps/io.github.SmoothTurtle872.BezierCurveViewer.png
+      - install -Dm644 data/icons/128x128.png /app/share/icons/hicolor/128x128/apps/io.github.SmoothTurtle872.BezierCurveViewer.png
+      - install -Dm644 data/icons/scalable.svg /app/share/icons/hicolor/scalable/apps/io.github.SmoothTurtle872.BezierCurveViewer.svg

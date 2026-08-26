@@ -1,1 +1,6 @@
 /target
+flatpak-cargo-generator.py
+/.flatpak-builder
+/build-dir
+/repo
+bezier-curve-viewer.flatpak
